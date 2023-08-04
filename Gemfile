@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
-ruby '2.6.0'
+ruby '3.2.2' # '2.6.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.2.2'
+gem 'rails', '7.0.6' # '5.2.2'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.3.6'
+gem 'sqlite3' #, '~> 1.3.6'
 # Use SCSS for stylesheets
 gem 'sass-rails'
 # Use Uglifier as compressor for JavaScript assets
@@ -26,4 +26,7 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # Include webrick webserver not bundled since ruby 3.0 onwards
+  gem 'webrick', '~>1.7'
 end
