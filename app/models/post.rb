@@ -82,6 +82,18 @@ class Post
     @errors.empty?
   end
 
+  def comments
+    comment_hashes = connection.execute "SELECT * FROM comments WHERE comments.post_id = ?", id
+    comment_hashes.map do |comment_hash|
+      Comment.new(comment_hash)
+    end
+  end
+
+  def create_comment(attributes)
+    comment = Comment.new(attributes.merge!('post_id' => id))
+    comment.save
+  end
+
   private
 
   def self.connection

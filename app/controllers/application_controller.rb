@@ -54,4 +54,12 @@ class ApplicationController < ActionController::Base
   
     redirect_to '/list_posts'
   end
+
+  def create_comment
+    post = Post.find(params[:post_id])
+    post.create_comment(
+      'body' => params['body'],
+      'author' => params['author'])
+    redirect_to "/show_post/#{params[:post_id]}"
+  end
 end
