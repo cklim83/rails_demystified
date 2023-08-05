@@ -3,4 +3,10 @@ CREATE TABLE "comments" (
   "body" text,
   "author" varchar,
   "post_id" integer,
-  "created_at" datetime NOT NULL);
+  "created_at" datetime NOT NULL,
+  
+  /* Added to ensure Comment#post does not break */
+  FOREIGN KEY("post_id") REFERENCES "posts"("id") 
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);

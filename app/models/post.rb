@@ -89,15 +89,24 @@ class Post
     end
   end
 
+  def build_comment(attributes)
+    Comment.new(attributes.merge!('post_id' => id))
+  end
+
   def create_comment(attributes)
-    comment = Comment.new(attributes.merge!('post_id' => id))
+    comment = build_comment
     comment.save
+  end
+
+  def delete_comment(comment_id)
+    Comment.find(comment_id).destroy
   end
 
   private
 
   def self.connection
     db_connection = SQLite3::Database.new('db/development.sqlite3')
+    db_connection.execute "PRAGMA FOREIGN_KEYS = ON"  # Enforce foreign key and cascade constraints
     db_connection.results_as_hash = true
     db_connection
   end
