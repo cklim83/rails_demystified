@@ -1,18 +1,5 @@
-class Post
-  attr_reader :id, :title, :body, :author, :created_at, :errors
-
-  def self.find(id)
-    post_hash = connection.execute("SELECT * FROM posts WHERE posts.id = ? LIMIT 1", id).first
-    Post.new(post_hash)
-  end
-
-  def self.all
-    post_hashes = connection.execute("SELECT * FROM posts")
-    post_hashes.map do |post_hash|
-      Post.new(post_hash)
-    end
-  end
-
+class Post < BaseModel
+  attr_reader :id, :title, :body, :author, :created_at
   def initialize(attributes={})
     set_attributes(attributes)
     @errors = {}
@@ -26,28 +13,11 @@ class Post
     @created_at ||= attributes['created_at']
   end
 
-  def new_record?
-    id.nil?
-  end
-
-  def save
-    return false unless valid?
-
-    if new_record?
-      insert
-    else
-      update
-    end
-
-    true
-  end
-
   def insert
     insert_query = <<~SQL
       INSERT INTO posts (title, body, author, created_at)
       VALUES (?, ?, ?, ?)
     SQL
- 
     connection.execute insert_query, 
       title, 
       body, 
@@ -71,10 +41,6 @@ class Post
       id
   end
 
-  def destroy
-    connection.execute "DELETE FROM posts WHERE posts.id = ?", id
-  end
-
   def valid?
     @errors['title'] = "can't be blank" if title.blank? 
     @errors['body'] = "can't be blank" if body.blank?
@@ -93,26 +59,7 @@ class Post
     Comment.new(attributes.merge!('post_id' => id))
   end
 
-  def create_comment(attributes)
-    comment = build_comment
-    comment.save
-  end
-
   def delete_comment(comment_id)
     Comment.find(comment_id).destroy
   end
-
-  private
-
-  def self.connection
-    db_connection = SQLite3::Database.new('db/development.sqlite3')
-    db_connection.execute "PRAGMA FOREIGN_KEYS = ON"  # Enforce foreign key and cascade constraints
-    db_connection.results_as_hash = true
-    db_connection
-  end
-
-  def connection
-    self.class.connection
-  end
-
 end
